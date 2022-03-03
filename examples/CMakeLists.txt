@@ -1,0 +1,2 @@
+add_executable(two_triangles two_triangles.cc)
+target_link_libraries(two_triangles xkiver)
