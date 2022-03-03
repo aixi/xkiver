@@ -5,7 +5,7 @@
 namespace xkiver
 {
 
-Triangle::Triangle() : vertexes_(3), color_(3), tex_coord_(3), normal_(3)
+Triangle::Triangle() : vertexes_(3), colors_(3), tex_coords_(3), normals_(3)
 {
 }
 
@@ -14,9 +14,9 @@ void Triangle::SetVertex(int index, const Eigen::Vector3f& value)
     vertexes_[index] = value;
 }
 
-void Triangle::SetNoraml(int index, const Eigen::Vector3f& normal)
+void Triangle::SetNormal(int index, const Eigen::Vector3f& normal)
 {
-    normal_[index] = normal;
+    normals_[index] = normal;
 }
 
 void Triangle::SetColor(int index, float r, float g, float b)
@@ -24,13 +24,22 @@ void Triangle::SetColor(int index, float r, float g, float b)
     assert(r >= 0 && r <= 255);
     assert(g >= 0 && g <= 255);
     assert(b >= 0 && b <= 255);
-    color_[index] << r / 255, g / 255, b / 255;
+    colors_[index] << r / 255, g / 255, b / 255;
 }
 
+void Triangle::SetNormals(const std::vector<Eigen::Vector3f>& normals)
+{
+    normals_ = normals;
+}
+
+void Triangle::SetColors(const std::vector<Eigen::Vector3f>& colors)
+{
+    colors_ = colors;
+}
 
 void Triangle::SetTexCoord(int index, float s, float t)
 {
-    tex_coord_[index] << s, t;
+    tex_coords_[index] << s, t;
 }
 
 std::vector<Eigen::Vector4f> Triangle::ToVector4f() const

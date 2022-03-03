@@ -245,7 +245,7 @@ void Rasterizer::RasterizeTriangle(const Triangle& triangle)
             }
             if (inside_count > 0 && min_depth < depth_buf_[GetIndexInBuffer(x, y)])
             {
-                Eigen::Vector3f color = triangle.GetColor() * inside_count / 4.0f;
+                Eigen::Vector3f color = triangle.GetColor(0) * inside_count / 4.0f;
                 Eigen::Vector3f z_point(static_cast<float>(x), static_cast<float>(y), min_depth);
                 depth_buf_[GetIndexInBuffer(x, y)] = min_depth;
                 SetPixel(z_point, color);
