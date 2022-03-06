@@ -49,6 +49,8 @@ struct ColorBufId
     int id = 0;
 };
 
+// VERTEX SHADER -> MVP -> Clipping -> /.W -> VIEWPORT -> DRAWLINE/DRAWTRI -> FRAGSHADER
+
 class Rasterizer
 {
 public:

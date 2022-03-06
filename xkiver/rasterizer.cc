@@ -61,7 +61,8 @@ ColorBufId Rasterizer::LoadColors(const std::vector<Eigen::Vector3f>& colors)
 
 void Rasterizer::SetPixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
 {
-    frame_buf_[GetIndexInBuffer(static_cast<int>(point.x()), static_cast<int>(point.y()))] = color;
+    int index = GetIndexInBuffer(static_cast<int>(point.x()), static_cast<int>(point.y()));
+    frame_buf_[index] = color;
 }
 
 void Rasterizer::Clear(BufferType which_buffers)
@@ -266,9 +267,11 @@ void Rasterizer::Draw(PosBufId pos_buf, IndexBufId idx_buf, ColorBufId color_buf
     {
         Triangle triangle;
         std::vector<Eigen::Vector4f> points;
+        // mvp transform
         points.push_back(mvp * ToVec4(vertice[elements[0]], 1.0f));
         points.push_back(mvp * ToVec4(vertice[elements[1]], 1.0f));
         points.push_back(mvp * ToVec4(vertice[elements[2]], 1.0f));
+        // TODO: clip
         // Homogeneous division
         for (Eigen::Vector4f& point : points)
         {

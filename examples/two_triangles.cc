@@ -19,16 +19,16 @@ int main(int argc, const char** argv)
 
     Rasterizer r(700, 700);
 
-    Eigen::Vector3f eye_pos(0, 0, 1);
-
+    // TODO: do not change, cause we skip clip in graphic pipelin
+    Eigen::Vector3f eye_pos(0, 0, 5);
 
     std::vector<Eigen::Vector3f> pos{
-        {-10, 0, -2},
-        {0, -20, -2},
-        {-20, 0, -2},
-        {10, 10, -5},
-        {25, 15, -5},
-        {10, 5, -5}
+        {2, 0, -2},
+        {0, 2, -2},
+        {-2, 0, -2},
+        {3.5, -1, -5},
+        {2.5, 1.5, -5},
+        {-1, 0.5, -5}
     };
 
     std::vector<Eigen::Vector3i> ind{
@@ -81,7 +81,7 @@ int main(int argc, const char** argv)
         r.SetViewMatrix(view);
         r.SetProjectionMatrix(projection);
 
-        r.Draw(pos_id, ind_id, col_id, PrimitiveType::TriangleLine);
+        r.Draw(pos_id, ind_id, col_id, PrimitiveType::Triangle);
 
         cv::Mat image(700, 700, CV_32FC3, const_cast<Eigen::Vector3f*>(r.GetFrameBuffer().data()));
         image.convertTo(image, CV_8UC3, 1.0f);
