@@ -11,37 +11,36 @@ Eigen::Matrix4f GetModelMatrix(float angle)
     return Eigen::Matrix4f::Identity();
 }
 
-Eigen::Matrix4f GetViewMatrix(const Eigen::Vector3f& eye_pos, const Eigen::Vector3f& look_at, const Eigen::Vector3f& up)
+Eigen::Matrix4f GetViewMatrix(const Eigen::Vector3f& eye, const Eigen::Vector3f& look_at, const Eigen::Vector3f& up)
 {
-    // Eigen::Vector3f f((look_at - eye).normalized());
-    // Eigen::Vector3f s(f.cross(up).normalized());
-    // Eigen::Vector3f u(s.cross(f));
-    // Eigen::Matrix4f result(Eigen::Matrix4f::Identity());
-    // result(0, 0) = s[0];
-    // result(1, 0) = s[1];
-    // result(2, 0) = s[2];
-    // result(0, 1) = u[0];
-    // result(1, 1) = u[1];
-    // result(2, 1) = u[2];
-    // result(0, 2) = -f[0];
-    // result(1, 2) = -f[1];
-    // result(2, 2) = -f[2];
-    // result(3, 0) = -s.dot(eye);
-    // result(3, 1) = -u.dot(eye);
-    // result(3, 2) = f.dot(eye);
-    // return result;'
-    boost::ignore_unused(look_at, up);
-    Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
+    Eigen::Vector3f f((look_at - eye).normalized());
+    Eigen::Vector3f s(f.cross(up).normalized());
+    Eigen::Vector3f u(s.cross(f));
+    Eigen::Matrix4f result(Eigen::Matrix4f::Identity());
+    result(0, 0) = s[0];
+    result(1, 0) = s[1];
+    result(2, 0) = s[2];
+    result(0, 1) = u[0];
+    result(1, 1) = u[1];
+    result(2, 1) = u[2];
+    result(0, 2) = -f[0];
+    result(1, 2) = -f[1];
+    result(2, 2) = -f[2];
+    result(3, 0) = -s.dot(eye);
+    result(3, 1) = -u.dot(eye);
+    result(3, 2) = f.dot(eye);
+    return result;
+    // boost::ignore_unused(look_at, up);
+    // Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
 
-    Eigen::Matrix4f translate;
-    translate << 1,0,0,-eye_pos[0],
-                 0,1,0,-eye_pos[1],
-                 0,0,1,-eye_pos[2],
-                 0,0,0,1;
+    // Eigen::Matrix4f translate;
+    // translate << 1,0,0,-eye_pos[0],
+    //              0,1,0,-eye_pos[1],
+    //              0,0,1,-eye_pos[2],
+    //              0,0,0,1;
 
-    view = translate*view;
+    // view = translate*view;
 
-    return view;
 }
 
 Eigen::Matrix4f GetPerspectiveMatrix(float fov_degree, float aspect_ratio, float near, float far)

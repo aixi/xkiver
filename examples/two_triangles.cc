@@ -23,9 +23,9 @@ int main(int argc, const char** argv)
     Eigen::Vector3f eye_pos(0, 0, 5);
 
     std::vector<Eigen::Vector3f> pos{
-        {2, 0, -2},
-        {0, 2, -2},
-        {-2, 0, -2},
+        {200, 0, 0},
+        {0, 200, 0},
+        {-200, 0, 0},
         {3.5, -1, -5},
         {2.5, 1.5, -5},
         {-1, 0.5, -5}

@@ -6,6 +6,7 @@
 #include <boost/core/ignore_unused.hpp>
 #include <xkiver/triangle.h>
 #include <xkiver/rasterizer.h>
+#include <xkiver/clip.h>
 #include <xkiver/utils.h>
 
 namespace xkiver
@@ -266,14 +267,36 @@ void Rasterizer::Draw(PosBufId pos_buf, IndexBufId idx_buf, ColorBufId color_buf
     for (const Eigen::Vector3i elements : indexes)
     {
         Triangle triangle;
-        std::vector<Eigen::Vector4f> points;
+        std::vector<Eigen::Vector4f> vertexes;
         // mvp transform
-        points.push_back(mvp * ToVec4(vertice[elements[0]], 1.0f));
-        points.push_back(mvp * ToVec4(vertice[elements[1]], 1.0f));
-        points.push_back(mvp * ToVec4(vertice[elements[2]], 1.0f));
-        // TODO: clip
+        vertexes.push_back(mvp * ToVec4(vertice[elements[0]], 1.0f));
+        vertexes.push_back(mvp * ToVec4(vertice[elements[1]], 1.0f));
+        vertexes.push_back(mvp * ToVec4(vertice[elements[2]], 1.0f));
+        // Homogeneous clip
+        // w > 1e-5, avoid divide zero error
+        Plane w_zero(Eigen::Vector4f(0, 0, 0, 1), Eigen::Vector4f(0, 0, 0, 0.0001f));
+        vertexes = w_zero.Clip(vertexes);
+        std::cout << "after w_zero vertexes size " << vertexes.size() << std::endl;
+        Plane x_left(Eigen::Vector4f(-1, 0, 0, -1));
+        vertexes = x_left.Clip(vertexes);
+        std::cout << "after x_left vertexes size " << vertexes.size() << std::endl;
+        Plane x_right(Eigen::Vector4f(1, 0, 0, -1));
+        vertexes = x_right.Clip(vertexes);
+        std::cout << "after x_right vertexes size " << vertexes.size() << std::endl;
+        Plane y_bottom(Eigen::Vector4f(0, -1, 0, -1));
+        vertexes = y_bottom.Clip(vertexes);
+        std::cout << "after y_bottom vertexes size " << vertexes.size() << std::endl;
+        Plane y_top(Eigen::Vector4f(0, 1, 0, -1));
+        vertexes = y_top.Clip(vertexes);
+        std::cout << "after y_top vertexes size " << vertexes.size() << std::endl;
+        Plane z_near(Eigen::Vector4f(0, 0, -1, -1));
+        vertexes = z_near.Clip(vertexes);
+        std::cout << "after z_near vertexes size " << vertexes.size() << std::endl;
+        Plane z_far(Eigen::Vector4f(0, 0, 1, -1));
+        vertexes = z_far.Clip(vertexes);
+        std::cout << "after z_far vertexes size " << vertexes.size() << std::endl;
         // Homogeneous division
-        for (Eigen::Vector4f& point : points)
+        for (Eigen::Vector4f& point : vertexes)
         {
             std::cout << point << std::endl;
             std::cout << "-------------------------" << std::endl;
@@ -281,7 +304,7 @@ void Rasterizer::Draw(PosBufId pos_buf, IndexBufId idx_buf, ColorBufId color_buf
             std::cout << point << std::endl;
         }
         // viewport transformation
-        for (Eigen::Vector4f& point : points)
+        for (Eigen::Vector4f& point : vertexes)
         {
             point.x() = 0.5f * static_cast<float>(width_) * (point.x() + 1.0f);
             point.y() = 0.5f * static_cast<float>(height_) * (point.y() + 1.0f);
@@ -296,7 +319,7 @@ void Rasterizer::Draw(PosBufId pos_buf, IndexBufId idx_buf, ColorBufId color_buf
         { 
             for (int i = 0; i < 3; ++i)
             {
-                triangle.SetVertex(i, points[i].head<3>());
+                triangle.SetVertex(i, vertexes[i].head<3>());
                 Eigen::Vector3f color = colors[elements[i]];
                 triangle.SetColor(i, color.x(), color.y(), color.z());
             }
